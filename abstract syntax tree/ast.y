@@ -1,15 +1,17 @@
 %{
   #include <stdio.h>
 
-  void yyerror();
-  int yylex();
-
   typedef struct SyntaxTree
   {
     char* content; 
-    int numchild;
     struct SyntaxTree **child;
   } SyntaxTree;
+
+
+  void yyerror();
+  int yylex();
+  void printTree(SyntaxTree* expr);
+  SyntaxTree* newNode(char* character, SyntaxTree* firstChild, SyntaxTree* secondChild);
 %}
 
 
@@ -26,23 +28,25 @@ posso ricevere un int o una string in questo caso
 }
 
 %token <stringa> NUMBER
-%token <stringa> OPERATOR
-
+%start line
 %type <tree> E T F
 
 %%
+line: E'\n' {printTree($1);}
 
-E: E '+'T
-  |E '-'T
-  |T
+E: E'+'T {$$=newNode('+', $1, $3);}
+  |E'-'T {$$=newNode('-', $1, $3);}
+  |T     {$$=newNode($1->content, $1, (SyntaxTree *)NULL);}
 
-T: T' 'OPERATOR F
-  |F
+T: T'*'F {$$=newNode('*', $1, $3);}
+  |T'/'F {$$=newNode('/', $1, $3);}
+  |T'%'F {$$=newNode('%', $1, $3);}
+  |F     {$$=newNode($1->content, $1, (SyntaxTree *)NULL);}
 
-F: NUMBER
-  |'-'F
-  |'+'F
-  |'('E')'
+F: NUMBER  {$$=newNode($1, (SyntaxTree *)NULL, (struct SyntaxTree *)NULL);}
+  |'-'F    {$$=newNode('-', $2, (SyntaxTree *)NULL);}
+  |'+'F    {$$=newNode('+', $2, (SyntaxTree *)NULL);}
+  |'('E')' {$$=newNode($2->content, (SyntaxTree *)NULL, (SyntaxTree *)NULL);}
 
 %%
 
@@ -54,13 +58,15 @@ void main(){
   yyparse();
 }
 
-void addNode(struct SyntaxTree *father, ) {
-  struct SyntaxTree *node = (struct SyntaxTree*) malloc(sizeof(struct SyntaxTree));
-  struct SyntaxTree *children = (struct SyntaxTree *) malloc(sizeof(struct SyntaxTree) * 2)
-  node-> 
+SyntaxTree* newNode(char* character, SyntaxTree* firstChild, SyntaxTree* secondChild) {
+  SyntaxTree *node = (SyntaxTree*) malloc(sizeof(SyntaxTree));
+  node->child = (SyntaxTree **) malloc(sizeof(SyntaxTree) * 2);
+  node->content = character; 
+  node->child[0] = firstChild;
+  node->child[1] = secondChild;
 }
 
-
-
-
-
+void printTree(SyntaxTree* expr) {
+  int counter = 0;
+  printf("%s",expr->content);
+}
