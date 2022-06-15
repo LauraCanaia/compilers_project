@@ -1,19 +1,22 @@
 %{
   #include <stdio.h>
   #include <stdlib.h>
+  #include <string.h>
 
   typedef struct SyntaxTree
   {
     char* content; 
-    struct SyntaxTree *left;
-    struct SyntaxTree *right;
+    int numchild;
+    struct SyntaxTree **child;
   } SyntaxTree;
 
 
   void yyerror();
   int yylex();
-  void printTree(SyntaxTree* expr);
-  SyntaxTree* newNode(char* character, SyntaxTree* firstChild, SyntaxTree* secondChild);
+  
+  SyntaxTree* newNode(char* character);
+  void addChild(char* stringa, SyntaxTree *node, SyntaxTree *child);
+  
 %}
 
 
@@ -22,7 +25,7 @@
 
 /*
 union mi permette dato in input stabilire il tipo, 
-posso ricevere un int o una string in questo caso
+posso ricevere una string in questo caso
 */
 %union{
     char *stringa;
@@ -34,21 +37,23 @@ posso ricevere un int o una string in questo caso
 %type <tree> E T F
 
 %%
-line: E'\n' {printTree($1);}
+line: E'\n' 
+    ;
 
-E: E'+'T {$$=newNode('+', $1, $3);}
-  |E'-'T {$$=newNode('-', $1, $3);}
-  |T     {$$=newNode($1->content, $1, NULL);}
+E: E'+'T        
+  |E'-'T 
+  |T   
+  ;  
 
-T: T'*'F {$$=newNode('*', $1, $3);}
-  |T'/'F {$$=newNode('/', $1, $3);}
-  |T'%'F {$$=newNode('%', $1, $3);}
-  |F     {$$=newNode($1->content, $1, NULL);}
+T: T'*'F 
+  |T'/'F 
+  |T'%'F 
+  |F  
+  ;   
 
-F: NUMBER  {$$=newNode($1, NULL, NULL);}
-  |'-'F    {$$=newNode('-', $2, NULL);}
-  |'+'F    {$$=newNode('+', $2, NULL);}
-  |'('E')' {$$=newNode($2->content, NULL, NULL);}
+F: NUMBER       
+  |'('E')'      
+  ;
 
 %%
 
@@ -60,19 +65,27 @@ void main(){
   yyparse();
 }
 
-SyntaxTree * newNode(char* character, SyntaxTree* firstChild, SyntaxTree* secondChild) {
-  SyntaxTree *node = (SyntaxTree*) malloc(sizeof(SyntaxTree));
-  node->content = character;
-  node->left = firstChild;
-  node->right = secondChild;
-  return node;
+SyntaxTree* newNode(char* stringa) {
+    SyntaxTree *node = (SyntaxTree*) malloc(sizeof(SyntaxTree));
+    node -> content = strcpy((char *)malloc(strlen(stringa)+1),stringa);
+    node -> numchild = 0;
+    node->child = NULL;
+    return node;
 }
+
+void addChild(char* stringa, SyntaxTree *node, SyntaxTree *child)
+{
+    SyntaxTree *nodeChild;
+    nodeChild = newNode(stringa);
+    
+    nodeChild -> child = (SyntaxTree **) realloc(nodeChild -> child, sizeof(SyntaxTree*)*(nodeChild -> numchild + 1));
+    nodeChild -> child[nodeChild -> numchild] = nodeChild;
+    nodeChild -> numchild++;
+}
+
 
 void printTree(SyntaxTree* expr) {
   int counter = 0;
   printf("%s",expr->content);
-  exit(0);
 }
-
-
 
