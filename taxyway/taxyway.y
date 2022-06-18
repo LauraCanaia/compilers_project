@@ -57,7 +57,7 @@ void direction(char* direction, int steps)
     else if(strcmp(direction, "RIGHT") == 0)
         xa = xa + steps;
     else if(strcmp(direction, "LEFT") == 0)
-        xa = xa + steps;
+        xa = xa - steps;
     else
         printf("Unexpected error\n");
 
