@@ -105,7 +105,7 @@ void addChild(SyntaxTree *node, SyntaxTree *left, SyntaxTree *right)
 
 void printTree(SyntaxTree* node, int indent) {
   for (int i=0;i<indent;i++)
-    printf("   ");
+    printf("  ");
   
   printf("%s", node->content);
   if (node->left != NULL) {

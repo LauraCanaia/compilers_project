@@ -1,2 +1,6 @@
 .vscode/
 esempi/
+ast
+taxyway
+*.yy.c
+*.tab.*
