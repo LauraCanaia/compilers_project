@@ -76,12 +76,14 @@ To run the [first Exercise](#1-the-taxy-way):
 
 *Example:*
 
+```
 ./taxyway
 
-UP 6 RIGHT 5<br/>
-Arrival point: X: 5, Y: 6<br/>
-Goal : X: 5, Y: 6<br/>
+UP 6 RIGHT 5
+Arrival point: X: 5, Y: 6
+Goal : X: 5, Y: 6
 GREAT! You reached the goal!
+```
 
 ### Second Exercise
 
@@ -104,10 +106,15 @@ To run the [second Exercise](#2-translate-the-infix-calculator-notation-into-an-
 
 *Example:*
 
-./taxyway
+```
+./ast
 
-UP 6 RIGHT 5<br/>
-Arrival point: X: 5, Y: 6<br/>
-Goal : X: 5, Y: 6<br/>
-GREAT! You reached the goal!
-
++25*-(2-3)
+*
+  (+)
+    25
+  (-)
+    -
+      2
+      3
+```
