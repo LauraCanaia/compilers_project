@@ -1,17 +1,22 @@
-
 %{
 #include <stdio.h>
 #include "y.tab.h"
 %}
+
+
 DIGIT [0-9]+
-DIRECTION "UP"|"DOWN"|"RIGHT"|"LEFT"
+MOVEMENT "UP"|"DOWN"|"RIGHT"|"LEFT"
+
 %%
 
-{DIRECTION} {yylval.string = strndup(yytext, yyleng); return DIRECTION;}
-{DIGIT} {yylval.number = atoi(yytext); return NUMBER;}
+exit                         exit(0);
+{MOVEMENT}                   {yylval.string = strndup(yytext, yyleng); return MOVEMENT;}
+{DIGIT}                      {yylval.number=atoi(yytext); return DIGIT;}
 
 [ \t\r]
 
 \n     return '\n';
 .      return yytext[0];
+
 %%
+

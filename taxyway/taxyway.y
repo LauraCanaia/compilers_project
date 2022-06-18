@@ -1,89 +1,88 @@
 %{
-  #include <stdio.h>
-  #include <stdlib.h>
-  #include <malloc.h>
-  #include <string.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-  void yyerror();
-  int yylex();
-  int* getRelativeCoord(char*, int);
-  int* sumCoord (int* coord1, int* coord2);
-  void checkCoord(int* coordinates);
+int yylex();
+void yyerror();
+int xa = 0, ya = 0;
+int xb = 5, yb = 6;
+
+void direction(char* direction, int steps);
+void checkVictory();
+
 %}
+
+%define parse.error verbose
+%start line
+
 %union{
-    int number;
-    char *string;
-    int* coord;
+  int number;
+  char *string;
 }
 
+%token <string> MOVEMENT
+%token <number> DIGIT
 
-// %start expressions
-%define parse.error verbose
-%token <number> NUMBER
-%token <string> DIRECTION
-%type <coord> expressions exp all
+%%
 
- %%
-  all: expressions'\n' {checkCoord($$);}
+line : expr'\n'                {checkVictory();}
+;
 
-  expressions: expressions exp{$$=sumCoord($1,$2);}
-             | exp {$$=$1;};
+expr : command expr        
+| command        
+;
 
-  exp: DIRECTION NUMBER {$$=getRelativeCoord($1, $2);}
- %%
+command : MOVEMENT DIGIT    {direction($1, $2);}
+;
+
+%%
 
 void yyerror(char const *s){
   fprintf(stderr,"%s\n",s);
 }
 
-void main(){
-  yyparse();
+void main()
+{
+    yyparse();
 }
 
-int* getRelativeCoord(char* direction, int steps){
-  int* result = (int*) calloc(2, sizeof(int));
+void direction(char* direction, int steps)
+{
 
+    if(strcmp(direction, "UP") == 0)
+        ya = ya + steps;
+    else if(strcmp(direction, "DOWN") == 0)
+        ya = ya - steps;
+    else if(strcmp(direction, "RIGHT") == 0)
+        xa = xa + steps;
+    else if(strcmp(direction, "LEFT") == 0)
+        xa = xa + steps;
+    else
+        printf("Unexpected error\n");
 
-  if (strcmp(direction, "UP") == 0) {
-    result[1] = result[1] + steps;
-    return result;
-  } 
-  else if (strcmp(direction, "DOWN") == 0) {
-    result[1] = result[1] - steps;
-    return result;
-  }
-  else if (strcmp(direction, "RIGHT") == 0) {
-    result[0] = result[0] + steps;
-    return result;
-  }
-  else if (strcmp(direction, "LEFT") == 0) {
-    result[0] = result[0] - steps;
-    return result;
-  }
-  else {
-    yyerror("Invalid direction");
-    exit(1);
-  }
 }
 
-int* sumCoord (int* coord1, int* coord2) {
-    int* result = (int*) calloc(2, sizeof(int));
-    result[0] = coord1[0]+coord2[0];
-    result[1] = coord1[1]+coord2[1];
-    return result;
-}
+void checkVictory()
+{
 
-void checkCoord(int* coordinates) {
-  printf("\nSTARTING POINT: (0, 0)\n");
-  printf("GOAL POINT: (5, 6)\n");
-  printf("YOU ENDED UP IN: (%d, %d)\n", coordinates[0], coordinates[1]);
-
-
-  if (coordinates[0] == 5 && coordinates[1] == 6) {
-    printf("CONGRATS! YOU REACHED THE GOAL!");
-  } else {
-    printf("UNFORTUNATELY YOU DIDN'T REACHED THE GOAL");
-  }
-  
-  exit(0);
+    printf("Arrival point: X: %d, Y: %d\n", xa, ya);
+    printf("Goal : X: %d, Y: %d\n", xb, yb);
+    
+    if(xa == xb && ya == yb)
+        printf("GREAT! You reached the goal!\n");
+    else
+    {
+        printf("Sorry, you didn't reach the goal.\n");
+        printf("To your sequence of movement you could have add the following steps to reach the goal:\n");
+        if(ya > yb)
+            printf("- DOWN %d\n", ya - yb);
+        if(ya < yb)
+            printf("- UP %d\n", yb - ya);
+        if(xa > xb)
+            printf("- LEFT %d\n", xa - xb);
+        if(xa < xb)
+            printf("- RIGHT %d\n", xb - xa);
+    }
+    exit(0);
 }
