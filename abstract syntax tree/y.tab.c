@@ -76,8 +76,8 @@
   {
     char* content; 
     int numchild;
-    struct SyntaxTree **left;
-    struct SyntaxTree **right;
+    struct SyntaxTree *left;
+    struct SyntaxTree *right;
   } SyntaxTree;
 
 
@@ -1590,10 +1590,10 @@ void addChild(char* stringa1, char* stringa2, SyntaxTree *node, SyntaxTree *left
     SyntaxTree *nodeChildright;
     nodeChildright = newNode(stringa2);
     
-    node -> left = (SyntaxTree **) realloc(node -> left, sizeof(SyntaxTree*)*(node -> numchild + 1));
+    node -> left = (SyntaxTree *) realloc(node -> left, sizeof(SyntaxTree));
     node -> left[node -> numchild] = nodeChildleft;
     
-    node -> right = (SyntaxTree **) realloc(node -> right, sizeof(SyntaxTree*)*(node -> numchild + 1));
+    node -> right = (SyntaxTree *) realloc(node -> right, sizeof(SyntaxTree));
     node -> right[node -> numchild] = nodeChildright;
     
     node -> numchild++;
@@ -1604,7 +1604,8 @@ void printTree() {
  //SyntaxTree* expr
   int counter = 0;
   SyntaxTree* node = newNode("mammt'");
-  printf("%s",node->content);
+  addChild("ciao", "mamma", node, NULL, NULL);
+  printf("%s",node->left->content);
   exit(0);
 }
 
