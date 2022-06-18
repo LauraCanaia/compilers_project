@@ -76,18 +76,20 @@
   {
     char* content; 
     int numchild;
-    struct SyntaxTree **child;
+    struct SyntaxTree **left;
+    struct SyntaxTree **right;
   } SyntaxTree;
 
 
   void yyerror();
   int yylex();
   
+  void printTree();
   SyntaxTree* newNode(char* character);
-  void addChild(char* stringa, SyntaxTree *node, SyntaxTree *child);
+  void addChild(char* stringa1, char* stringa2, SyntaxTree *node, SyntaxTree *left, SyntaxTree *right);
   
 
-#line 91 "y.tab.c"
+#line 93 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -145,12 +147,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 30 "ast.y"
+#line 32 "ast.y"
 
     char *stringa;
     struct SyntaxTree *tree;
 
-#line 154 "y.tab.c"
+#line 156 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -525,8 +527,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    40,    40,    43,    44,    45,    48,    49,    50,    51,
-      54,    55
+       0,    42,    42,    45,    46,    47,    50,    51,    52,    53,
+      56,    57
 };
 #endif
 
@@ -1321,8 +1323,14 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 2:
+#line 42 "ast.y"
+                {printTree();}
+#line 1330 "y.tab.c"
+    break;
 
-#line 1326 "y.tab.c"
+
+#line 1334 "y.tab.c"
 
       default: break;
     }
@@ -1554,7 +1562,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 58 "ast.y"
+#line 60 "ast.y"
 
 
 void yyerror(char const *s){
@@ -1569,23 +1577,34 @@ SyntaxTree* newNode(char* stringa) {
     SyntaxTree *node = (SyntaxTree*) malloc(sizeof(SyntaxTree));
     node -> content = strcpy((char *)malloc(strlen(stringa)+1),stringa);
     node -> numchild = 0;
-    node->child = NULL;
+    node->left = NULL;
+    node->right = NULL;
     return node;
 }
 
-void addChild(char* stringa, SyntaxTree *node, SyntaxTree *child)
+void addChild(char* stringa1, char* stringa2, SyntaxTree *node, SyntaxTree *left, SyntaxTree *right)
 {
-    SyntaxTree *nodeChild;
-    nodeChild = newNode(stringa);
+    SyntaxTree *nodeChildleft;
+    nodeChildleft = newNode(stringa1);
     
-    nodeChild -> child = (SyntaxTree **) realloc(nodeChild -> child, sizeof(SyntaxTree*)*(nodeChild -> numchild + 1));
-    nodeChild -> child[nodeChild -> numchild] = nodeChild;
-    nodeChild -> numchild++;
+    SyntaxTree *nodeChildright;
+    nodeChildright = newNode(stringa2);
+    
+    node -> left = (SyntaxTree **) realloc(node -> left, sizeof(SyntaxTree*)*(node -> numchild + 1));
+    node -> left[node -> numchild] = nodeChildleft;
+    
+    node -> right = (SyntaxTree **) realloc(node -> right, sizeof(SyntaxTree*)*(node -> numchild + 1));
+    node -> right[node -> numchild] = nodeChildright;
+    
+    node -> numchild++;
 }
 
 
-void printTree(SyntaxTree* expr) {
+void printTree() {
+ //SyntaxTree* expr
   int counter = 0;
-  printf("%s",expr->content);
+  SyntaxTree* node = newNode("mammt'");
+  printf("%s",node->content);
+  exit(0);
 }
 

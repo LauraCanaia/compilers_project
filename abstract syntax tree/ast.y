@@ -7,15 +7,17 @@
   {
     char* content; 
     int numchild;
-    struct SyntaxTree **child;
+    struct SyntaxTree **left;
+    struct SyntaxTree **right;
   } SyntaxTree;
 
 
   void yyerror();
   int yylex();
   
+  void printTree();
   SyntaxTree* newNode(char* character);
-  void addChild(char* stringa, SyntaxTree *node, SyntaxTree *child);
+  void addChild(char* stringa1, char* stringa2, SyntaxTree *node, SyntaxTree *left, SyntaxTree *right);
   
 %}
 
@@ -34,14 +36,14 @@ posso ricevere una string in questo caso
 
 %token <stringa> NUMBER
 %start line
-%type <tree> E T F
+//%type <tree> E T F
 
 %%
-line: E'\n' 
+line: E'\n'     {printTree();} 
     ;
 
 E: E'+'T        
-  |E'-'T 
+  |E'-'T
   |T   
   ;  
 
@@ -69,23 +71,34 @@ SyntaxTree* newNode(char* stringa) {
     SyntaxTree *node = (SyntaxTree*) malloc(sizeof(SyntaxTree));
     node -> content = strcpy((char *)malloc(strlen(stringa)+1),stringa);
     node -> numchild = 0;
-    node->child = NULL;
+    node->left = NULL;
+    node->right = NULL;
     return node;
 }
 
-void addChild(char* stringa, SyntaxTree *node, SyntaxTree *child)
+void addChild(char* stringa1, char* stringa2, SyntaxTree *node, SyntaxTree *left, SyntaxTree *right)
 {
-    SyntaxTree *nodeChild;
-    nodeChild = newNode(stringa);
+    SyntaxTree *nodeChildleft;
+    nodeChildleft = newNode(stringa1);
     
-    nodeChild -> child = (SyntaxTree **) realloc(nodeChild -> child, sizeof(SyntaxTree*)*(nodeChild -> numchild + 1));
-    nodeChild -> child[nodeChild -> numchild] = nodeChild;
-    nodeChild -> numchild++;
+    SyntaxTree *nodeChildright;
+    nodeChildright = newNode(stringa2);
+    
+    node -> left = (SyntaxTree **) realloc(node -> left, sizeof(SyntaxTree*)*(node -> numchild + 1));
+    node -> left[node -> numchild] = nodeChildleft;
+    
+    node -> right = (SyntaxTree **) realloc(node -> right, sizeof(SyntaxTree*)*(node -> numchild + 1));
+    node -> right[node -> numchild] = nodeChildright;
+    
+    node -> numchild++;
 }
 
 
-void printTree(SyntaxTree* expr) {
+void printTree() {
+ //SyntaxTree* expr
   int counter = 0;
-  printf("%s",expr->content);
+  SyntaxTree* node = newNode("mammt'");
+  printf("%s",node->content);
+  exit(0);
 }
 
