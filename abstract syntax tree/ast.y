@@ -7,7 +7,6 @@
   typedef struct SyntaxTree
   {
     char* content; 
-    int numchild;
     struct SyntaxTree *left;
     struct SyntaxTree *right;
   } SyntaxTree;
@@ -88,7 +87,6 @@ char* getPointer(int character, bool parethesis) {
 SyntaxTree* newNode(char* stringa) {
     SyntaxTree *node = (SyntaxTree*) malloc(sizeof(SyntaxTree));
     node -> content = strcpy((char *)malloc(strlen(stringa)+1),stringa);
-    node -> numchild = 0;
     node->left = NULL;
     node->right = NULL;
     return node;
@@ -99,7 +97,6 @@ void addChild(SyntaxTree *node, SyntaxTree *left, SyntaxTree *right)
     node -> left = left;
     node -> right = right;
     
-    node -> numchild++;
 }
 
 

@@ -14,7 +14,7 @@ void checkVictory();
 %}
 
 %define parse.error verbose
-%start line
+%start lines
 
 %union{
   int number;
@@ -25,6 +25,10 @@ void checkVictory();
 %token <number> DIGIT
 
 %%
+
+lines : line lines
+| line                      
+;
 
 line : expr'\n'                {checkVictory();}
 ;
@@ -70,7 +74,10 @@ void checkVictory()
     printf("Goal : X: %d, Y: %d\n", xb, yb);
     
     if(xa == xb && ya == yb)
+    {
         printf("GREAT! You reached the goal!\n");
+        exit(0);
+    }
     else
     {
         printf("Sorry, you didn't reach the goal.\n");
@@ -84,5 +91,4 @@ void checkVictory()
         if(xa < xb)
             printf("- RIGHT %d\n", xb - xa);
     }
-    exit(0);
 }
